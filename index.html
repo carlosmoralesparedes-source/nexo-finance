@@ -1,11 +1,11 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#173f35">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#153d39">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Nexo Finance">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
@@ -13,95 +13,218 @@
   <title>Nexo Finance</title>
 </head>
 <body>
-  <div class="app-shell">
-    <header class="topbar">
-      <div>
-        <div class="eyebrow">TU ESPACIO FINANCIERO</div>
-        <h1>Nexo<span>Finance</span></h1>
-      </div>
-      <button class="icon-btn" id="themeBtn" aria-label="Cambiar tema">◐</button>
-    </header>
 
-    <main>
-      <section class="hero-card">
-        <div class="hero-top">
-          <span>Patrimonio total</span>
-          <span class="live-dot">● LOCAL</span>
-        </div>
-        <div class="balance" id="netWorth">$0,00</div>
-        <div class="hero-foot">
-          <div><small>Dinero disponible</small><strong id="available">$0,00</strong></div>
-          <div class="hero-mark">N</div>
-        </div>
-      </section>
-
-      <section class="month-row">
-        <div><div class="eyebrow">RESUMEN DEL MES</div><h2 id="monthName">Este mes</h2></div>
-        <button class="text-btn" id="monthReset">Ver actual ↗</button>
-      </section>
-
-      <section class="summary-grid">
-        <article class="summary-card income">
-          <div class="summary-label"><span class="mini-icon">↙</span> Ingresos</div>
-          <strong id="incomeTotal">$0,00</strong>
-        </article>
-        <article class="summary-card expense">
-          <div class="summary-label"><span class="mini-icon">↗</span> Gastos</div>
-          <strong id="expenseTotal">$0,00</strong>
-        </article>
-      </section>
-
-      <section class="section-head">
-        <div><div class="eyebrow">ACTIVIDAD</div><h2>Movimientos recientes</h2></div>
-        <button class="text-btn" id="allTransactions">Ver todos</button>
-      </section>
-      <section class="transaction-list" id="transactionList">
-        <div class="empty-state"><div class="empty-icon">↗</div><strong>Aún no hay movimientos</strong><span>Registra tu primer ingreso o gasto.</span></div>
-      </section>
-
-      <section class="section-head accounts-head">
-        <div><div class="eyebrow">TU DINERO</div><h2>Mis cuentas</h2></div>
-        <button class="text-btn" id="addAccountBtn">+ Añadir</button>
-      </section>
-      <section class="account-list" id="accountList"></section>
-    </main>
-
-    <button class="fab" id="addMovementBtn" aria-label="Añadir movimiento">+</button>
-    <nav class="bottom-nav">
-      <button class="nav-item active" data-tab="home"><span>⌂</span>Inicio</button>
-      <button class="nav-item" data-tab="transactions"><span>⇄</span>Movimientos</button>
-      <button class="nav-item" data-tab="budgets"><span>▤</span>Presupuestos</button>
-      <button class="nav-item" data-tab="settings"><span>⚙</span>Ajustes</button>
-    </nav>
+<header class="topbar">
+  <div>
+    <span class="eyebrow">TUS FINANZAS PERSONALES</span>
+    <h1>Nexo <span>Finance</span></h1>
   </div>
+  <button id="themeBtn" class="icon-btn" aria-label="Cambiar tema">◐</button>
+</header>
 
-  <dialog id="movementDialog">
-    <form id="movementForm" method="dialog">
-      <div class="dialog-head"><div><div class="eyebrow">NUEVO REGISTRO</div><h2>Movimiento</h2></div><button type="button" class="close-btn" data-close="movementDialog">×</button></div>
-      <div class="segmented"><button type="button" class="type-btn selected" data-type="expense">Gasto</button><button type="button" class="type-btn" data-type="income">Ingreso</button></div>
-      <label>Descripción<input id="description" required maxlength="70" placeholder="Ej. Supermercado"></label>
-      <label>Valor ($)<input id="amount" required type="number" min="0.01" step="0.01" inputmode="decimal" placeholder="0,00"></label>
-      <div class="form-row"><label>Categoría<select id="category"></select></label><label>Cuenta<select id="accountSelect"></select></label></div>
-      <label>Fecha<input id="date" type="date" required></label>
-      <label>Detalle (opcional)<textarea id="notes" rows="2" placeholder="Añade una nota..."></textarea></label>
-      <button class="primary-btn" type="submit">Guardar movimiento</button>
-    </form>
-  </dialog>
+<main>
+  <section id="dashboard" class="page active">
+    <div class="hero">
+      <span class="muted-light">Patrimonio neto</span>
+      <h2 id="netWorth">$0,00</h2>
+      <div class="hero-grid">
+        <div><small>Dinero disponible</small><strong id="available">$0,00</strong></div>
+        <div><small>Dinero libre</small><strong id="freeMoney">$0,00</strong></div>
+      </div>
+    </div>
 
-  <dialog id="accountDialog">
-    <form id="accountForm" method="dialog">
-      <div class="dialog-head"><div><div class="eyebrow">ORGANIZA TU DINERO</div><h2>Nueva cuenta</h2></div><button type="button" class="close-btn" data-close="accountDialog">×</button></div>
-      <label>Nombre<input id="accountName" required maxlength="35" placeholder="Ej. Banco principal"></label>
-      <label>Saldo inicial ($)<input id="accountBalance" type="number" step="0.01" inputmode="decimal" value="0"></label>
-      <label>Tipo<select id="accountType"><option>Efectivo</option><option>Banco</option><option>Ahorros</option><option>Tarjeta</option><option>Otro</option></select></label>
-      <button class="primary-btn" type="submit">Guardar cuenta</button>
-    </form>
-  </dialog>
+    <div class="metric-grid">
+      <article class="metric-card">
+        <span>Ingresos del mes</span>
+        <strong id="monthIncome">$0,00</strong>
+      </article>
+      <article class="metric-card">
+        <span>Gastos del mes</span>
+        <strong id="monthExpense">$0,00</strong>
+      </article>
+      <article class="metric-card">
+        <span>Deudas pendientes</span>
+        <strong id="totalDebts">$0,00</strong>
+      </article>
+      <article class="metric-card">
+        <span>Compromisos</span>
+        <strong id="commitments">$0,00</strong>
+      </article>
+    </div>
 
-  <dialog id="simpleDialog">
-    <div class="dialog-head"><div><div class="eyebrow">NEXO FINANCE</div><h2 id="simpleTitle">Información</h2></div><button class="close-btn" data-close="simpleDialog">×</button></div>
-    <div id="simpleContent"></div>
-  </dialog>
-  <script src="app.js"></script>
+    <div class="quick-actions">
+      <button class="primary-btn" data-action="expense">− Registrar gasto</button>
+      <button class="secondary-btn" data-action="income">＋ Registrar ingreso</button>
+    </div>
+
+    <section class="panel">
+      <div class="section-heading">
+        <h3>Mis cuentas</h3>
+        <button class="text-btn" data-page="accounts">Ver todas</button>
+      </div>
+      <div id="accountPreview"></div>
+    </section>
+
+    <section class="panel">
+      <div class="section-heading">
+        <h3>Movimientos recientes</h3>
+        <button class="text-btn" data-page="transactions">Ver todos</button>
+      </div>
+      <div id="recentTransactions"></div>
+    </section>
+  </section>
+
+  <section id="accounts" class="page">
+    <div class="page-heading">
+      <h2>Mis cuentas</h2>
+      <button class="primary-btn" id="addAccount">＋ Añadir</button>
+    </div>
+    <div id="accountsList"></div>
+  </section>
+
+  <section id="transactions" class="page">
+    <div class="page-heading">
+      <h2>Movimientos</h2>
+      <button class="primary-btn" data-action="expense">＋ Nuevo</button>
+    </div>
+    <div class="filter-row">
+      <select id="transactionFilter">
+        <option value="all">Todos</option>
+        <option value="income">Ingresos</option>
+        <option value="expense">Gastos</option>
+        <option value="transfer">Transferencias</option>
+      </select>
+    </div>
+    <div id="transactionsList"></div>
+  </section>
+
+  <section id="analysis" class="page">
+    <h2>Análisis financiero</h2>
+    <div class="panel">
+      <h3>Balance del mes</h3>
+      <div id="analysisSummary"></div>
+    </div>
+    <div class="panel">
+      <h3>Gastos por categoría</h3>
+      <div id="categoryAnalysis"></div>
+    </div>
+    <div class="panel">
+      <h3>Historial mensual</h3>
+      <div id="monthlyAnalysis"></div>
+    </div>
+  </section>
+
+  <section id="planning" class="page">
+    <h2>Planificación</h2>
+    <div class="panel">
+      <div class="section-heading">
+        <h3>Presupuestos</h3>
+        <button class="primary-btn" id="addBudget">＋ Añadir</button>
+      </div>
+      <div id="budgetsList"></div>
+    </div>
+    <div class="panel">
+      <div class="section-heading">
+        <h3>Metas de ahorro</h3>
+        <button class="primary-btn" id="addGoal">＋ Añadir</button>
+      </div>
+      <div id="goalsList"></div>
+    </div>
+    <div class="panel">
+      <div class="section-heading">
+        <h3>Deudas y compromisos</h3>
+        <button class="primary-btn" id="addDebt">＋ Añadir</button>
+      </div>
+      <div id="debtsList"></div>
+    </div>
+  </section>
+
+  <section id="settings" class="page">
+    <h2>Configuración</h2>
+    <div class="panel">
+      <h3>Datos y seguridad</h3>
+      <p class="muted">Tus registros se almacenan localmente en este dispositivo.</p>
+      <button class="secondary-btn full-btn" id="backupBtn">Descargar copia de seguridad</button>
+      <button class="secondary-btn full-btn" id="restoreBtn">Restaurar copia de seguridad</button>
+      <input type="file" id="restoreFile" accept=".json,application/json" hidden>
+    </div>
+    <div class="panel">
+      <h3>Apariencia</h3>
+      <button class="secondary-btn full-btn" id="settingsTheme">Cambiar tema claro / oscuro</button>
+    </div>
+    <div class="panel">
+      <h3>Nexo Finance</h3>
+      <p class="muted">Versión 2.0 · Finanzas personales</p>
+    </div>
+  </section>
+</main>
+
+<nav class="bottom-nav">
+  <button class="nav-item active" data-page="dashboard"><span>⌂</span><small>Inicio</small></button>
+  <button class="nav-item" data-page="accounts"><span>▣</span><small>Cuentas</small></button>
+  <button class="nav-item" data-page="transactions"><span>↕</span><small>Movimientos</small></button>
+  <button class="nav-item" data-page="analysis"><span>▥</span><small>Análisis</small></button>
+  <button class="nav-item" data-page="planning"><span>◎</span><small>Planificar</small></button>
+</nav>
+
+<dialog id="entryDialog">
+  <form id="entryForm">
+    <h3 id="entryTitle">Nuevo movimiento</h3>
+    <label>Descripción<input id="entryDescription" required maxlength="80"></label>
+    <label>Monto<input id="entryAmount" type="number" min="0.01" step="0.01" required></label>
+    <label>Categoría<select id="entryCategory">
+      <option>Alimentación</option><option>Transporte</option>
+      <option>Hogar</option><option>Salud</option><option>Ocio</option>
+      <option>Educación</option><option>Salario</option><option>Otros</option>
+    </select></label>
+    <label>Cuenta<select id="entryAccount" required></select></label>
+    <label>Método de pago<select id="paymentMethod">
+      <option value="cash">Efectivo</option>
+      <option value="transfer">Transferencia</option>
+      <option value="deuna">De Una!</option>
+      <option value="card">Tarjeta</option>
+    </select></label>
+    <label>Fecha<input id="entryDate" type="date" required></label>
+    <div class="dialog-actions">
+      <button type="button" class="secondary-btn" data-close="entryDialog">Cancelar</button>
+      <button type="submit" class="primary-btn">Guardar</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="accountDialog">
+  <form id="accountForm">
+    <h3>Nueva cuenta</h3>
+    <label>Nombre<input id="accountName" required maxlength="50" placeholder="Ej. Banco Pichincha"></label>
+    <label>Tipo<select id="accountType">
+      <option value="cash">Efectivo</option>
+      <option value="bank">Cuenta bancaria</option>
+      <option value="deuna">De Una!</option>
+      <option value="savings">Ahorros</option>
+      <option value="other">Otra</option>
+    </select></label>
+    <label>Saldo inicial ($)<input id="accountBalance" type="number" step="0.01" required value="0"></label>
+    <div class="dialog-actions">
+      <button type="button" class="secondary-btn" data-close="accountDialog">Cancelar</button>
+      <button type="submit" class="primary-btn">Guardar cuenta</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="transferDialog">
+  <form id="transferForm">
+    <h3>Transferir entre cuentas</h3>
+    <label>Desde<select id="transferFrom"></select></label>
+    <label>Hacia<select id="transferTo"></select></label>
+    <label>Monto ($)<input id="transferAmount" type="number" min="0.01" step="0.01" required></label>
+    <label>Fecha<input id="transferDate" type="date" required></label>
+    <div class="dialog-actions">
+      <button type="button" class="secondary-btn" data-close="transferDialog">Cancelar</button>
+      <button type="submit" class="primary-btn">Transferir</button>
+    </div>
+  </form>
+</dialog>
+
+<script src="app.js"></script>
 </body>
 </html>
